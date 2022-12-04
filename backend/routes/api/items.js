@@ -37,9 +37,11 @@ router.param("comment", function(req, res, next, id) {
 });
 
 router.get("/", auth.optional, function(req, res, next) {
+  // todo - here I'll add the filtering by title.
   var query = {};
   var limit = 100;
   var offset = 0;
+  var title;
 
   if (typeof req.query.limit !== "undefined") {
     limit = req.query.limit;
@@ -53,6 +55,10 @@ router.get("/", auth.optional, function(req, res, next) {
     query.tagList = { $in: [req.query.tag] };
   }
 
+  if (typeof req.query.title !== "undefined") {
+    title = req.query.title;
+  }
+
   Promise.all([
     req.query.seller ? User.findOne({ username: req.query.seller }) : null,
     req.query.favorited ? User.findOne({ username: req.query.favorited }) : null
@@ -63,6 +69,10 @@ router.get("/", auth.optional, function(req, res, next) {
 
       if (seller) {
         query.seller = seller._id;
+      }
+
+      if (title) {
+        query.title = title;
       }
 
       if (favoriter) {
