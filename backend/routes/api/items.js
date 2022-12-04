@@ -56,7 +56,7 @@ router.get("/", auth.optional, function(req, res, next) {
   }
 
   if (typeof req.query.title !== "undefined") {
-    title = req.query.title;
+    query.title = { "$regex": req.query.title, "$options": "i" }
   }
 
   Promise.all([
@@ -69,10 +69,6 @@ router.get("/", auth.optional, function(req, res, next) {
 
       if (seller) {
         query.seller = seller._id;
-      }
-
-      if (title) {
-        query.title = title;
       }
 
       if (favoriter) {
