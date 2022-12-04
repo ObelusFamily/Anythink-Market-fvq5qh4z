@@ -37,9 +37,11 @@ router.param("comment", function(req, res, next, id) {
 });
 
 router.get("/", auth.optional, function(req, res, next) {
+  // todo - here I'll add the filtering by title.
   var query = {};
   var limit = 100;
   var offset = 0;
+  var title;
 
   if (typeof req.query.limit !== "undefined") {
     limit = req.query.limit;
@@ -51,6 +53,10 @@ router.get("/", auth.optional, function(req, res, next) {
 
   if (typeof req.query.tag !== "undefined") {
     query.tagList = { $in: [req.query.tag] };
+  }
+
+  if (typeof req.query.title !== "undefined") {
+    query.title = { "$regex": req.query.title, "$options": "i" }
   }
 
   Promise.all([
